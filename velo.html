@@ -1,1 +1,1424 @@
-fg
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Velo.uz — Bolalar Velosipedlari</title>
+
+<!-- ═══════════════════════════════════════════
+     FILE 1: styles.css (inline)
+     ═══════════════════════════════════════════ -->
+<style>
+  /* === RESET & BASE === */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --cyan:    #00D4FF;
+    --lime:    #C8FF00;
+    --navy:    #050A1A;
+    --darkblue:#0A1628;
+    --midblue: #0F2040;
+    --white:   #F0F6FF;
+    --gray:    #8899BB;
+    --card-bg: rgba(15,32,64,0.85);
+    --glow:    0 0 40px rgba(0,212,255,0.35);
+    --font-display: 'Exo 2', sans-serif;
+    --font-body:    'Inter', sans-serif;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;600;900&family=Inter:wght@400;500&display=swap');
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--navy);
+    color: var(--white);
+    overflow-x: hidden;
+  }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--navy); }
+  ::-webkit-scrollbar-thumb { background: var(--cyan); border-radius: 3px; }
+
+  /* === PARTICLES CANVAS === */
+  #particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+  /* ═══════════════════════
+     NAV
+  ═══════════════════════ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    height: 70px;
+    background: rgba(5,10,26,0.8);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(0,212,255,0.12);
+  }
+
+  .nav-logo {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--cyan); }
+
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--gray); font-size: 0.88rem; text-decoration: none;
+    letter-spacing: 0.06em; text-transform: uppercase; font-weight: 500;
+    transition: color 0.25s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 1.5px; background: var(--cyan);
+    transform: scaleX(0); transition: transform 0.25s;
+  }
+  .nav-links a:hover { color: var(--cyan); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  .nav-cta {
+    background: var(--cyan); color: var(--navy);
+    padding: 0.5rem 1.4rem; border-radius: 6px;
+    font-size: 0.85rem; font-weight: 600; text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: box-shadow 0.25s, transform 0.2s;
+  }
+  .nav-cta:hover { box-shadow: var(--glow); transform: translateY(-1px); }
+
+  /* burger */
+  .burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+  .burger span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: 0.3s; }
+  .nav-mobile-open .burger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .nav-mobile-open .burger span:nth-child(2) { opacity: 0; }
+  .nav-mobile-open .burger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ═══════════════════════
+     HERO
+  ═══════════════════════ */
+  #hero {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center;
+    padding: 100px 2rem 4rem;
+    overflow: hidden;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 100px;
+    padding: 0.35rem 1rem;
+    font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 2rem;
+    animation: fadeSlide 0.8s ease both;
+  }
+  .hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--cyan); animation: pulse 1.5s infinite; }
+
+  .hero-h1 {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: clamp(3rem, 9vw, 7.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    animation: fadeSlide 0.9s 0.1s ease both;
+  }
+  .hero-h1 .accent { color: var(--cyan); display: block; }
+  .hero-h1 .accent-lime { color: var(--lime); }
+
+  .hero-sub {
+    max-width: 500px;
+    margin: 1.8rem auto 0;
+    color: var(--gray);
+    font-size: 1.05rem; line-height: 1.65;
+    animation: fadeSlide 1s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    margin-top: 2.5rem;
+    animation: fadeSlide 1.1s 0.3s ease both;
+  }
+
+  .btn-primary {
+    background: var(--cyan); color: var(--navy);
+    padding: 0.85rem 2.2rem; border-radius: 8px;
+    font-weight: 700; font-size: 0.95rem; letter-spacing: 0.03em;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.3s;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: var(--glow); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid rgba(0,212,255,0.4);
+    color: var(--white);
+    padding: 0.85rem 2.2rem; border-radius: 8px;
+    font-weight: 500; font-size: 0.95rem;
+    text-decoration: none; cursor: pointer;
+    transition: border-color 0.25s, color 0.25s;
+  }
+  .btn-ghost:hover { border-color: var(--cyan); color: var(--cyan); }
+
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 4rem;
+    animation: fadeSlide 1.2s 0.4s ease both;
+    flex-wrap: wrap; justify-content: center;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: var(--font-display); font-size: 2.4rem; font-weight: 900;
+    color: var(--cyan); line-height: 1;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--gray); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.3rem; }
+
+  /* === 3D BIKE SVG === */
+  .hero-bike-wrap {
+    position: absolute; right: -60px; bottom: 0;
+    width: min(600px, 55vw);
+    opacity: 0.18;
+    animation: bikeFloat 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @media (max-width: 900px) { .hero-bike-wrap { display: none; } }
+
+  /* ═══════════════════════
+     SECTION SHARED
+  ═══════════════════════ */
+  section { position: relative; z-index: 1; }
+
+  .section-label {
+    display: inline-block;
+    font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--cyan); margin-bottom: 0.8rem;
+  }
+  .section-title {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    line-height: 1.05; letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .section-sub { color: var(--gray); font-size: 1rem; line-height: 1.7; max-width: 520px; }
+  .divider { width: 48px; height: 3px; background: var(--cyan); border-radius: 2px; margin: 1.2rem 0; }
+
+  /* ═══════════════════════
+     CATEGORIES
+  ═══════════════════════ */
+  #categories { padding: 6rem clamp(1.5rem, 8vw, 7rem); }
+
+  .cats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.2rem; margin-top: 3rem;
+  }
+
+  .cat-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(0,212,255,0.1);
+    border-radius: 16px;
+    padding: 2rem 1.6rem 1.8rem;
+    cursor: pointer;
+    transition: transform 0.35s cubic-bezier(.175,.885,.32,1.275),
+                border-color 0.25s, box-shadow 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .cat-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 60% 30%, rgba(0,212,255,0.08), transparent 70%);
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .cat-card:hover { transform: translateY(-8px) scale(1.015); border-color: rgba(0,212,255,0.4); box-shadow: var(--glow); }
+  .cat-card:hover::before { opacity: 1; }
+
+  .cat-icon { font-size: 2.8rem; margin-bottom: 1.2rem; display: block; }
+  .cat-name { font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; margin-bottom: 0.4rem; }
+  .cat-range { color: var(--cyan); font-size: 0.82rem; font-weight: 600; }
+  .cat-count { color: var(--gray); font-size: 0.78rem; margin-top: 0.3rem; }
+
+  /* ═══════════════════════
+     PRODUCTS
+  ═══════════════════════ */
+  #products { padding: 6rem clamp(1.5rem, 8vw, 7rem); background: var(--darkblue); }
+
+  .products-header { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1rem; }
+  .filter-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1.5rem; }
+  .filter-btn {
+    padding: 0.4rem 1.1rem; border-radius: 100px;
+    border: 1px solid rgba(0,212,255,0.25);
+    background: transparent; color: var(--gray);
+    font-size: 0.8rem; font-family: var(--font-body);
+    cursor: pointer; transition: 0.2s; letter-spacing: 0.04em;
+  }
+  .filter-btn.active, .filter-btn:hover { background: var(--cyan); color: var(--navy); border-color: var(--cyan); font-weight: 600; }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.5rem; margin-top: 2.5rem;
+  }
+
+  .product-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px; overflow: hidden;
+    transition: transform 0.4s cubic-bezier(.175,.885,.32,1.275), box-shadow 0.3s;
+    cursor: pointer;
+  }
+  .product-card:hover { transform: translateY(-10px); box-shadow: 0 24px 60px rgba(0,0,0,0.5), var(--glow); }
+
+  .product-img {
+    height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 6rem;
+    position: relative; overflow: hidden;
+    transition: transform 0.5s ease;
+  }
+  .product-card:hover .product-img { transform: scale(1.05); }
+
+  .product-img .bg-glow {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    width: 180px; height: 180px;
+    margin: auto;
+    filter: blur(50px);
+    opacity: 0.4;
+  }
+  .product-img .emoji { position: relative; z-index: 1; filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5)); }
+
+  .badge {
+    position: absolute; top: 12px; right: 12px;
+    background: var(--lime); color: var(--navy);
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em;
+    padding: 0.25rem 0.6rem; border-radius: 4px; text-transform: uppercase;
+  }
+  .badge.hot { background: #FF4757; color: #fff; }
+
+  .product-info { padding: 1.4rem 1.5rem 1.6rem; }
+  .product-age { font-size: 0.72rem; color: var(--cyan); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .product-name { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .product-feats { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+  .feat-tag {
+    font-size: 0.7rem; padding: 0.2rem 0.6rem; border-radius: 4px;
+    background: rgba(0,212,255,0.1); color: var(--gray);
+    border: 1px solid rgba(0,212,255,0.15);
+  }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-family: var(--font-display); font-size: 1.4rem; font-weight: 900; color: var(--white); }
+  .product-price small { font-size: 0.75rem; color: var(--gray); font-family: var(--font-body); font-weight: 400; }
+  .add-btn {
+    width: 38px; height: 38px; border-radius: 8px;
+    background: var(--cyan); color: var(--navy);
+    border: none; cursor: pointer;
+    font-size: 1.3rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .add-btn:hover { transform: scale(1.12); box-shadow: var(--glow); }
+
+  .stars { color: #FFD700; font-size: 0.75rem; margin-bottom: 0.5rem; }
+  .stars span { color: var(--gray); margin-left: 0.3rem; font-size: 0.72rem; }
+
+  /* ═══════════════════════
+     FEATURES / WHY US
+  ═══════════════════════ */
+  #features { padding: 6rem clamp(1.5rem, 8vw, 7rem); }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.5rem; margin-top: 3.5rem;
+  }
+
+  .feat-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 16px;
+    padding: 2rem 1.6rem;
+    transition: border-color 0.25s, transform 0.3s;
+  }
+  .feat-card:hover { border-color: rgba(200,255,0,0.35); transform: translateY(-5px); }
+
+  .feat-icon-wrap {
+    width: 52px; height: 52px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.6rem; margin-bottom: 1.2rem;
+    background: rgba(0,212,255,0.1);
+  }
+  .feat-card-title { font-family: var(--font-display); font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; }
+  .feat-card-text { color: var(--gray); font-size: 0.85rem; line-height: 1.65; }
+
+  /* ═══════════════════════
+     3D SCENE
+  ═══════════════════════ */
+  #scene3d { padding: 5rem clamp(1.5rem, 8vw, 7rem); background: var(--darkblue); text-align: center; }
+
+  .canvas-wrap {
+    margin: 3rem auto 0;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid rgba(0,212,255,0.15);
+    box-shadow: 0 0 80px rgba(0,212,255,0.12);
+    max-width: 700px; aspect-ratio: 16/9;
+    position: relative;
+  }
+
+  #threeCanvas { display: block; width: 100% !important; height: 100% !important; }
+
+  /* ═══════════════════════
+     TESTIMONIALS
+  ═══════════════════════ */
+  #reviews { padding: 6rem clamp(1.5rem, 8vw, 7rem); }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.4rem; margin-top: 3rem;
+  }
+
+  .review-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 18px; padding: 1.8rem;
+    transition: transform 0.3s;
+  }
+  .review-card:hover { transform: translateY(-4px); }
+
+  .review-stars { color: #FFD700; font-size: 0.9rem; margin-bottom: 1rem; }
+  .review-text { color: var(--gray); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.2rem; font-style: italic; }
+  .review-author { display: flex; align-items: center; gap: 0.8rem; }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; background: rgba(0,212,255,0.15);
+  }
+  .author-name { font-weight: 600; font-size: 0.88rem; }
+  .author-loc { font-size: 0.75rem; color: var(--gray); }
+
+  /* ═══════════════════════
+     NEWSLETTER / CTA BAND
+  ═══════════════════════ */
+  #cta-band {
+    padding: 5rem clamp(1.5rem, 8vw, 7rem);
+    background: linear-gradient(135deg, rgba(0,212,255,0.08), rgba(200,255,0,0.05));
+    border-top: 1px solid rgba(0,212,255,0.1);
+    border-bottom: 1px solid rgba(0,212,255,0.1);
+    text-align: center;
+  }
+
+  .cta-band-title {
+    font-family: var(--font-display); font-weight: 900;
+    font-size: clamp(1.8rem, 5vw, 3.2rem); line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .cta-band-sub { color: var(--gray); max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.6; }
+
+  .email-form {
+    display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap;
+    max-width: 480px; margin: 0 auto;
+  }
+  .email-input {
+    flex: 1; min-width: 240px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(0,212,255,0.25);
+    border-radius: 8px; padding: 0.85rem 1.2rem;
+    color: var(--white); font-family: var(--font-body); font-size: 0.9rem;
+    outline: none; transition: border-color 0.25s;
+  }
+  .email-input:focus { border-color: var(--cyan); }
+  .email-input::placeholder { color: var(--gray); }
+
+  /* ═══════════════════════
+     FOOTER
+  ═══════════════════════ */
+  footer {
+    padding: 4rem clamp(1.5rem, 8vw, 7rem) 2.5rem;
+    background: rgba(0,0,0,0.4);
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem; margin-bottom: 3rem;
+  }
+  .footer-brand p { color: var(--gray); font-size: 0.88rem; line-height: 1.7; margin: 1rem 0 1.5rem; max-width: 260px; }
+  .footer-socials { display: flex; gap: 0.8rem; }
+  .social-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; text-decoration: none; color: var(--white);
+    transition: 0.2s;
+  }
+  .social-btn:hover { background: var(--cyan); color: var(--navy); }
+
+  .footer-col h4 { font-weight: 700; font-size: 0.85rem; letter-spacing: 0.07em; text-transform: uppercase; color: var(--white); margin-bottom: 1.2rem; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .footer-col a { color: var(--gray); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--cyan); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 2rem;
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-bottom p { color: var(--gray); font-size: 0.8rem; }
+  .footer-bottom .made { color: var(--gray); font-size: 0.8rem; }
+  .footer-bottom .made span { color: var(--cyan); }
+
+  /* ═══════════════════════
+     ANIMATIONS
+  ═══════════════════════ */
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  @keyframes bikeFloat {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-22px) rotate(-3deg); }
+  }
+  @keyframes spin3d {
+    from { transform: rotateY(0); }
+    to   { transform: rotateY(360deg); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ═══════════════════════
+     CART DRAWER
+  ═══════════════════════ */
+  .cart-icon {
+    position: fixed; bottom: 2rem; right: 2rem;
+    width: 58px; height: 58px; border-radius: 50%;
+    background: var(--cyan); color: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; cursor: pointer; z-index: 200;
+    box-shadow: var(--glow);
+    transition: transform 0.2s;
+  }
+  .cart-icon:hover { transform: scale(1.1); }
+  .cart-count {
+    position: absolute; top: -4px; right: -4px;
+    background: var(--lime); color: var(--navy);
+    font-size: 0.65rem; font-weight: 700;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .cart-drawer {
+    position: fixed; top: 0; right: -380px; bottom: 0;
+    width: 360px;
+    background: var(--darkblue);
+    border-left: 1px solid rgba(0,212,255,0.2);
+    z-index: 300; padding: 2rem 1.5rem;
+    transition: right 0.35s cubic-bezier(.4,0,.2,1);
+    overflow-y: auto;
+  }
+  .cart-drawer.open { right: 0; }
+  .cart-overlay {
+    display: none; position: fixed; inset: 0; z-index: 299;
+    background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  }
+  .cart-overlay.active { display: block; }
+
+  .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+  .cart-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; }
+  .cart-close { background: none; border: none; color: var(--gray); font-size: 1.5rem; cursor: pointer; padding: 4px; }
+  .cart-close:hover { color: var(--white); }
+
+  .cart-items { display: flex; flex-direction: column; gap: 1rem; min-height: 200px; }
+  .cart-item {
+    display: flex; align-items: center; gap: 1rem;
+    background: rgba(255,255,255,0.04); border-radius: 12px; padding: 0.9rem;
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+  .ci-emoji { font-size: 2rem; }
+  .ci-info { flex: 1; }
+  .ci-name { font-weight: 600; font-size: 0.88rem; }
+  .ci-price { color: var(--cyan); font-size: 0.82rem; margin-top: 0.2rem; }
+  .ci-remove { background: none; border: none; color: var(--gray); cursor: pointer; font-size: 1rem; padding: 4px; transition: color 0.2s; }
+  .ci-remove:hover { color: #FF4757; }
+
+  .cart-footer { margin-top: 2rem; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 1.5rem; }
+  .cart-total { display: flex; justify-content: space-between; font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin-bottom: 1.2rem; }
+  .cart-total span:last-child { color: var(--cyan); }
+
+  .cart-empty { text-align: center; color: var(--gray); padding: 3rem 1rem; }
+  .cart-empty .empty-icon { font-size: 3rem; margin-bottom: 1rem; display: block; opacity: 0.5; }
+
+  /* ═══════════════════════
+     RESPONSIVE
+  ═══════════════════════ */
+  @media (max-width: 900px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links, .nav-cta { display: none; }
+    .burger { display: flex; }
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; top: 70px;
+      background: var(--navy); z-index: 90;
+      flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { color: var(--white); text-decoration: none; font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; }
+    .mobile-menu a:hover { color: var(--cyan); }
+  }
+  @media (max-width: 600px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════
+     FILE 2: particles.js canvas bg
+     ═══════════════════════════════════════════ -->
+<canvas id="particles"></canvas>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo">Velo<span>.uz</span></a>
+  <ul class="nav-links">
+    <li><a href="#categories">Turkumlar</a></li>
+    <li><a href="#products">Mahsulotlar</a></li>
+    <li><a href="#features">Nima uchun biz?</a></li>
+    <li><a href="#reviews">Fikrlar</a></li>
+  </ul>
+  <a href="#products" class="nav-cta">Do'konga kirish</a>
+  <div class="burger" id="burger">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#categories" onclick="closeMobile()">Turkumlar</a>
+  <a href="#products" onclick="closeMobile()">Mahsulotlar</a>
+  <a href="#features" onclick="closeMobile()">Nima uchun biz?</a>
+  <a href="#reviews" onclick="closeMobile()">Fikrlar</a>
+  <a href="#products" class="btn-primary" onclick="closeMobile()">Do'konga kirish</a>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+     ═══════════════════════════════════════════ -->
+<section id="hero">
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    Toshkentdagi eng yaxshi bolalar velosipedlari
+  </div>
+
+  <h1 class="hero-h1">
+    Bolangiz uchun
+    <span class="accent">eng <span class="accent-lime">zo'r</span></span>
+    velosiped
+  </h1>
+
+  <p class="hero-sub">
+    2 yoshdan 14 yoshgacha — xavfsiz, engil va chiroyli velosipedlar. 
+    Toshkent bo'ylab bepul yetkazib berish.
+  </p>
+
+  <div class="hero-actions">
+    <a href="#products" class="btn-primary">Katalogni ko'rish</a>
+    <a href="#scene3d" class="btn-ghost">3D Ko'rinish →</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num" id="cnt1">0</div>
+      <div class="stat-label">Mahsulot turi</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="cnt2">0</div>
+      <div class="stat-label">Mamnun xaridor</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="cnt3">0</div>
+      <div class="stat-label">Yillik tajriba</div>
+    </div>
+  </div>
+
+  <!-- decorative large bike -->
+  <div class="hero-bike-wrap">
+    <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" fill="none">
+      <circle cx="140" cy="220" r="90" stroke="#00D4FF" stroke-width="14" opacity="0.9"/>
+      <circle cx="360" cy="220" r="90" stroke="#00D4FF" stroke-width="14" opacity="0.9"/>
+      <circle cx="140" cy="220" r="20" fill="#00D4FF" opacity="0.5"/>
+      <circle cx="360" cy="220" r="20" fill="#00D4FF" opacity="0.5"/>
+      <!-- frame -->
+      <polyline points="140,220 250,130 360,220" stroke="#C8FF00" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="250" y1="130" x2="250" y2="220" stroke="#C8FF00" stroke-width="8" stroke-linecap="round"/>
+      <line x1="140" y1="220" x2="250" y2="220" stroke="#00D4FF" stroke-width="8" stroke-linecap="round"/>
+      <!-- handlebar -->
+      <line x1="250" y1="130" x2="310" y2="110" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+      <line x1="295" y1="100" x2="325" y2="110" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+      <!-- seat -->
+      <line x1="250" y1="130" x2="220" y2="115" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+      <line x1="205" y1="108" x2="235" y2="108" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+      <!-- pedals -->
+      <circle cx="250" cy="220" r="14" fill="#C8FF00" opacity="0.9"/>
+      <line x1="230" y1="220" x2="270" y2="220" stroke="#fff" stroke-width="4"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CATEGORIES
+     ═══════════════════════════════════════════ -->
+<section id="categories">
+  <span class="section-label">Turkumlar</span>
+  <h2 class="section-title">Yosh bo'yicha<br>tanlang</h2>
+  <div class="divider"></div>
+  <p class="section-sub">Har bir yosh guruh uchun ergonomik va xavfsiz velosipedlar.</p>
+
+  <div class="cats-grid reveal">
+    <div class="cat-card" onclick="filterProducts('2-4')">
+      <span class="cat-icon">🚲</span>
+      <div class="cat-name">Kichkintoylar</div>
+      <div class="cat-range">2 — 4 yosh</div>
+      <div class="cat-count">12 ta model</div>
+    </div>
+    <div class="cat-card" onclick="filterProducts('4-6')">
+      <span class="cat-icon">🚵</span>
+      <div class="cat-name">Bog'cha yoshi</div>
+      <div class="cat-range">4 — 6 yosh</div>
+      <div class="cat-count">18 ta model</div>
+    </div>
+    <div class="cat-card" onclick="filterProducts('6-10')">
+      <span class="cat-icon">🏆</span>
+      <div class="cat-name">Maktab yoshi</div>
+      <div class="cat-range">6 — 10 yosh</div>
+      <div class="cat-count">24 ta model</div>
+    </div>
+    <div class="cat-card" onclick="filterProducts('10-14')">
+      <span class="cat-icon">⚡</span>
+      <div class="cat-name">O'smirlar</div>
+      <div class="cat-range">10 — 14 yosh</div>
+      <div class="cat-count">16 ta model</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     PRODUCTS
+     ═══════════════════════════════════════════ -->
+<section id="products">
+  <div class="products-header">
+    <div>
+      <span class="section-label">Katalog</span>
+      <h2 class="section-title">Mashhur<br>mahsulotlar</h2>
+      <div class="divider"></div>
+    </div>
+  </div>
+
+  <div class="filter-tabs reveal">
+    <button class="filter-btn active" onclick="filterProducts('all', this)">Barchasi</button>
+    <button class="filter-btn" onclick="filterProducts('2-4', this)">2–4 yosh</button>
+    <button class="filter-btn" onclick="filterProducts('4-6', this)">4–6 yosh</button>
+    <button class="filter-btn" onclick="filterProducts('6-10', this)">6–10 yosh</button>
+    <button class="filter-btn" onclick="filterProducts('10-14', this)">10–14 yosh</button>
+  </div>
+
+  <div class="products-grid reveal" id="productsGrid">
+    <!-- rendered by JS -->
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     3D SCENE (Three.js)
+     ═══════════════════════════════════════════ -->
+<section id="scene3d">
+  <span class="section-label">3D Ko'rinish</span>
+  <h2 class="section-title">Velosipedni<br>360° ko'ring</h2>
+  <div class="divider" style="margin:1.2rem auto;"></div>
+  <p class="section-sub" style="margin:0 auto;">Interaktiv modelni sichqoncha bilan aylantiring.</p>
+  <div class="canvas-wrap reveal">
+    <canvas id="threeCanvas"></canvas>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FEATURES
+     ═══════════════════════════════════════════ -->
+<section id="features">
+  <span class="section-label">Afzalliklar</span>
+  <h2 class="section-title">Nima uchun<br>Velo.uz?</h2>
+  <div class="divider"></div>
+
+  <div class="features-grid reveal">
+    <div class="feat-card">
+      <div class="feat-icon-wrap">🛡️</div>
+      <div class="feat-card-title">100% Xavfsizlik</div>
+      <div class="feat-card-text">Sertifikatlangan po'latdan tayyorlangan ramkalar. Har bir velosiped xavfsizlik testidan o'tadi.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon-wrap">🚀</div>
+      <div class="feat-card-title">Bepul yetkazish</div>
+      <div class="feat-card-text">Toshkent shahri bo'ylab 24 soat ichida yetkazib beramiz. Viloyatlarga ham jo'natamiz.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon-wrap">🔧</div>
+      <div class="feat-card-title">1 yil kafolat</div>
+      <div class="feat-card-text">Barcha mahsulotlarimizga 12 oy kafolat. Bepul ta'mirlash xizmati.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon-wrap">⚖️</div>
+      <div class="feat-card-title">Engil konstruksiya</div>
+      <div class="feat-card-text">Alyuminiy qotishma — 3.5 kg dan boshlangan og'irlik. Bola osongina boshqaradi.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon-wrap">💳</div>
+      <div class="feat-card-title">Muddatli to'lov</div>
+      <div class="feat-card-text">0% foizda 6 oyga bo'lib to'lash imkoniyati. Karta va naqd qabul qilinadi.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon-wrap">🎨</div>
+      <div class="feat-card-title">Rang tanlash</div>
+      <div class="feat-card-text">Har bir model 5+ rangda mavjud. Bolangizning sevimli rangini tanlang.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     REVIEWS
+     ═══════════════════════════════════════════ -->
+<section id="reviews">
+  <span class="section-label">Mijozlar fikri</span>
+  <h2 class="section-title">Ular nima<br>deyishadi?</h2>
+  <div class="divider"></div>
+
+  <div class="reviews-grid reveal">
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"O'g'lim 5 yoshga to'lganda sovg'a qildim. Sifati juda yaxshi, qurilishi mustahkam. Farzandim hafsalasi oshib ketdi!"</p>
+      <div class="review-author">
+        <div class="avatar">👩</div>
+        <div>
+          <div class="author-name">Malika Yusupova</div>
+          <div class="author-loc">📍 Toshkent, Yunusobod</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"Sifati narxiga yarasha, balki undan ham yaxshiroq. Katta qizim uchun 10 yoshli model oldik. Tezda yetkazib berishdi!"</p>
+      <div class="review-author">
+        <div class="avatar">👨</div>
+        <div>
+          <div class="author-name">Bobur Karimov</div>
+          <div class="author-loc">📍 Toshkent, Chilonzor</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★☆</div>
+      <p class="review-text">"3 yoshli qizim uchun kichik velosiped oldik. Juda chiroyli, og'irligi ham yengil. Bolam xursand, biz ham!"</p>
+      <div class="review-author">
+        <div class="avatar">👩‍🦱</div>
+        <div>
+          <div class="author-name">Dilnoza Rashidova</div>
+          <div class="author-loc">📍 Samarqand</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card">
+      <div class="review-stars">★★★★★</div>
+      <p class="review-text">"Ikkinchi marta xarid qildim. Birinchi martagisi 3 yildan beri ishlab kelyapti, yangi modeli yanada zo'r ekan."</p>
+      <div class="review-author">
+        <div class="avatar">👨‍🦲</div>
+        <div>
+          <div class="author-name">Sherzod Tursunov</div>
+          <div class="author-loc">📍 Toshkent, Mirzo Ulugbek</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     CTA BAND / NEWSLETTER
+     ═══════════════════════════════════════════ -->
+<section id="cta-band">
+  <h2 class="cta-band-title">Yangi modellardan<br><span style="color:var(--cyan)">birinchi xabardor</span> bo'ling</h2>
+  <p class="cta-band-sub">Chegirmalar va yangi kelgan mahsulotlar haqida telefon raqamingizga xabar boramiz.</p>
+  <div class="email-form">
+    <input type="tel" class="email-input" placeholder="+998 90 000 00 00" />
+    <button class="btn-primary" onclick="subscribePhone()">Obuna bo'lish</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+     ═══════════════════════════════════════════ -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="#" class="nav-logo">Velo<span style="color:var(--cyan)">.uz</span></a>
+      <p>Bolalar uchun xavfsiz va sifatli velosipedlar. 2015 yildan beri ishonchli xizmat.</p>
+      <div class="footer-socials">
+        <a href="#" class="social-btn">📘</a>
+        <a href="#" class="social-btn">📸</a>
+        <a href="#" class="social-btn">💬</a>
+        <a href="#" class="social-btn">▶️</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Katalog</h4>
+      <ul>
+        <li><a href="#products">2–4 yosh</a></li>
+        <li><a href="#products">4–6 yosh</a></li>
+        <li><a href="#products">6–10 yosh</a></li>
+        <li><a href="#products">10–14 yosh</a></li>
+        <li><a href="#products">Aksessuarlar</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kompaniya</h4>
+      <ul>
+        <li><a href="#">Biz haqimizda</a></li>
+        <li><a href="#">Yangiliklar</a></li>
+        <li><a href="#">Hamkorlik</a></li>
+        <li><a href="#">Vakansiyalar</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Aloqa</h4>
+      <ul>
+        <li><a href="tel:+998781234567">☎️ +998 78 123 45 67</a></li>
+        <li><a href="mailto:info@velo.uz">✉️ info@velo.uz</a></li>
+        <li><a href="#">📍 Toshkent, Amir Temur ko'chasi 15</a></li>
+        <li><a href="#">🕐 Dush–Yak: 9:00–20:00</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Velo.uz — Barcha huquqlar himoyalangan.</p>
+    <p class="made">Toshkentda <span>❤️</span> bilan yaratildi</p>
+  </div>
+</footer>
+
+<!-- Cart Icon -->
+<div class="cart-icon" onclick="toggleCart()" title="Savatcha">
+  🛒
+  <div class="cart-count" id="cartCount">0</div>
+</div>
+
+<!-- Cart Overlay + Drawer -->
+<div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+<div class="cart-drawer" id="cartDrawer">
+  <div class="cart-header">
+    <span class="cart-title">🛒 Savatcha</span>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <span class="empty-icon">🚲</span>
+      Savatchada hali hech narsa yo'q.<br>Mahsulot qo'shing!
+    </div>
+  </div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">
+      <span>Jami:</span>
+      <span id="cartTotal">0 so'm</span>
+    </div>
+    <button class="btn-primary" style="width:100%;text-align:center" onclick="checkout()">
+      Buyurtma berish →
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FILE 3: products.js  (data + render)
+     FILE 4: app.js       (interactions)
+     FILE 5: three-scene.js (Three.js 3D)
+     all inline below
+     ═══════════════════════════════════════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script>
+/* ══════════════════════════════
+   FILE 3 — products.js
+   ══════════════════════════════ */
+const PRODUCTS = [
+  {
+    id: 1, age: '2-4', name: 'Mini Star 12"', emoji: '🚲',
+    price: 890000, rating: 4.9, reviews: 128,
+    features: ['Balans g\'ildirak', 'Yumshoq rul', '12 dyuym'],
+    badge: 'Yangi', badgeType: '',
+    color: '#00D4FF'
+  },
+  {
+    id: 2, age: '2-4', name: 'Baby Rider 10"', emoji: '🛴',
+    price: 720000, rating: 4.8, reviews: 94,
+    features: ['Plastik korpus', 'Tormoz yo\'q', 'Og\'irlik 2.8 kg'],
+    badge: null,
+    color: '#FF6B9D'
+  },
+  {
+    id: 3, age: '4-6', name: 'Kids Pro 16"', emoji: '🚵',
+    price: 1250000, rating: 5.0, reviews: 210,
+    features: ['3 vitesli', 'Disk tormoz', 'Alyuminiy'],
+    badge: 'Bestseller', badgeType: 'hot',
+    color: '#C8FF00'
+  },
+  {
+    id: 4, age: '4-6', name: 'Rainbow 16"', emoji: '🌈',
+    price: 980000, rating: 4.7, reviews: 76,
+    features: ['Renkli dizayn', 'Qo\'shimcha g\'ildirak', 'Sandal'],
+    badge: null,
+    color: '#FFB347'
+  },
+  {
+    id: 5, age: '6-10', name: 'Speed X 20"', emoji: '⚡',
+    price: 1680000, rating: 4.9, reviews: 189,
+    features: ['7 vitesli', 'Shimano', 'MTB shinalar'],
+    badge: 'TOP', badgeType: '',
+    color: '#00D4FF'
+  },
+  {
+    id: 6, age: '6-10', name: 'Urban Kid 20"', emoji: '🏙️',
+    price: 1420000, rating: 4.6, reviews: 55,
+    features: ['Shahar uchun', 'LED chiroq', 'Portbagaj'],
+    badge: null,
+    color: '#A855F7'
+  },
+  {
+    id: 7, age: '10-14', name: 'Teen Racer 24"', emoji: '🏆',
+    price: 2150000, rating: 5.0, reviews: 302,
+    features: ['21 vitesli', 'Hidravlik tormoz', 'Karbon fork'],
+    badge: 'Premium', badgeType: 'hot',
+    color: '#C8FF00'
+  },
+  {
+    id: 8, age: '10-14', name: 'Mountain Jr 24"', emoji: '🏔️',
+    price: 1890000, rating: 4.8, reviews: 143,
+    features: ['To\'siq amortizator', 'Keng shinalar', 'Grunt uchun'],
+    badge: null,
+    color: '#FF6B35'
+  }
+];
+
+function priceFormat(n) {
+  return n.toLocaleString('uz-UZ') + ' so\'m';
+}
+
+function starsHtml(r) {
+  let s = '';
+  for (let i = 1; i <= 5; i++) s += i <= Math.floor(r) ? '★' : (i - r < 1 ? '✩' : '☆');
+  return s;
+}
+
+function renderProducts(filter = 'all') {
+  const grid = document.getElementById('productsGrid');
+  const list = filter === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.age === filter);
+  grid.innerHTML = '';
+  list.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'product-card reveal';
+    div.style.animationDelay = (i * 0.07) + 's';
+    div.innerHTML = `
+      <div class="product-img" style="background:linear-gradient(135deg,rgba(${hexToRgb(p.color)},0.12),var(--midblue));">
+        <div class="bg-glow" style="background:${p.color};"></div>
+        <span class="emoji">${p.emoji}</span>
+        ${p.badge ? `<span class="badge ${p.badgeType}">${p.badge}</span>` : ''}
+      </div>
+      <div class="product-info">
+        <div class="product-age">${p.age} yosh</div>
+        <div class="product-name">${p.name}</div>
+        <div class="stars">${starsHtml(p.rating)}<span>${p.rating} (${p.reviews} ta)</span></div>
+        <div class="product-feats">${p.features.map(f=>`<span class="feat-tag">${f}</span>`).join('')}</div>
+        <div class="product-footer">
+          <div class="product-price">${priceFormat(p.price)}<br><small>yoki muddatli to'lov</small></div>
+          <button class="add-btn" onclick="addToCart(${p.id})" title="Savatga qo'shish">+</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+  observeReveal();
+}
+
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return `${r},${g},${b}`;
+}
+
+/* ══════════════════════════════
+   FILE 4 — app.js
+   ══════════════════════════════ */
+let cart = [];
+
+function filterProducts(age, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderProducts(age);
+  document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+}
+
+function addToCart(id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  const exists = cart.find(x => x.id === id);
+  if (exists) {
+    exists.qty++;
+  } else {
+    cart.push({ ...p, qty: 1 });
+  }
+  updateCart();
+  showAddToast(p.name);
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(x => x.id !== id);
+  updateCart();
+}
+
+function updateCart() {
+  const count = cart.reduce((a, x) => a + x.qty, 0);
+  document.getElementById('cartCount').textContent = count;
+
+  const itemsEl = document.getElementById('cartItems');
+  const footerEl = document.getElementById('cartFooter');
+
+  if (cart.length === 0) {
+    itemsEl.innerHTML = `<div class="cart-empty"><span class="empty-icon">🚲</span>Savatchada hali hech narsa yo'q.<br>Mahsulot qo'shing!</div>`;
+    footerEl.style.display = 'none';
+  } else {
+    itemsEl.innerHTML = cart.map(c => `
+      <div class="cart-item">
+        <span class="ci-emoji">${c.emoji}</span>
+        <div class="ci-info">
+          <div class="ci-name">${c.name} × ${c.qty}</div>
+          <div class="ci-price">${priceFormat(c.price * c.qty)}</div>
+        </div>
+        <button class="ci-remove" onclick="removeFromCart(${c.id})">✕</button>
+      </div>
+    `).join('');
+    const total = cart.reduce((a, x) => a + x.price * x.qty, 0);
+    document.getElementById('cartTotal').textContent = priceFormat(total);
+    footerEl.style.display = 'block';
+  }
+}
+
+function toggleCart() {
+  document.getElementById('cartDrawer').classList.toggle('open');
+  document.getElementById('cartOverlay').classList.toggle('active');
+}
+
+function checkout() {
+  alert('✅ Buyurtmangiz qabul qilindi!\n\nOperatorimiz 15 daqiqa ichida siz bilan bog\'lanadi.');
+  cart = [];
+  updateCart();
+  toggleCart();
+}
+
+function subscribePhone() {
+  const inp = document.querySelector('.email-input');
+  if (inp.value.trim()) {
+    alert(`✅ +${inp.value.replace(/\D/g,'')} raqami ro\'yxatga qo\'shildi!`);
+    inp.value = '';
+  } else {
+    alert('Iltimos, telefon raqamingizni kiriting.');
+  }
+}
+
+function showAddToast(name) {
+  const toast = document.createElement('div');
+  toast.textContent = `✅ ${name} savatga qo'shildi`;
+  Object.assign(toast.style, {
+    position: 'fixed', bottom: '100px', right: '2rem',
+    background: 'var(--cyan)', color: 'var(--navy)',
+    padding: '0.7rem 1.4rem', borderRadius: '8px',
+    fontWeight: '700', fontSize: '0.85rem',
+    zIndex: '1000', boxShadow: '0 8px 30px rgba(0,212,255,0.4)',
+    transform: 'translateY(20px)', opacity: '0',
+    transition: 'all 0.3s ease'
+  });
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'; }, 10);
+  setTimeout(() => { toast.style.opacity = '0'; toast.remove(); }, 2600);
+}
+
+// Counter animation
+function animateCounter(id, target, suffix = '') {
+  let val = 0;
+  const el = document.getElementById(id);
+  const step = Math.ceil(target / 60);
+  const t = setInterval(() => {
+    val = Math.min(val + step, target);
+    el.textContent = val + suffix;
+    if (val >= target) clearInterval(t);
+  }, 22);
+}
+
+// Scroll reveal
+function observeReveal() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+}
+
+// Burger menu
+function closeMobile() {
+  document.getElementById('mobileMenu').classList.remove('open');
+  document.getElementById('mainNav').classList.remove('nav-mobile-open');
+}
+document.getElementById('burger').addEventListener('click', () => {
+  document.getElementById('mobileMenu').classList.toggle('open');
+  document.getElementById('mainNav').classList.toggle('nav-mobile-open');
+});
+
+// Init
+window.addEventListener('load', () => {
+  renderProducts('all');
+  observeReveal();
+
+  // Hero stats counter (trigger when visible)
+  const heroObs = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting) {
+      animateCounter('cnt1', 70, '+');
+      animateCounter('cnt2', 4800, '+');
+      animateCounter('cnt3', 9, '');
+      heroObs.disconnect();
+    }
+  });
+  heroObs.observe(document.querySelector('.hero-stats'));
+});
+
+/* ══════════════════════════════
+   FILE 1b — particles.js
+   ══════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('particles');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function mkParticle() {
+    return {
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: Math.random() * 1.5 + 0.3,
+      dx: (Math.random() - 0.5) * 0.3,
+      dy: (Math.random() - 0.5) * 0.3,
+      alpha: Math.random() * 0.5 + 0.1
+    };
+  }
+
+  function init() {
+    resize();
+    particles = Array.from({ length: 120 }, mkParticle);
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0,212,255,${p.alpha})`;
+      ctx.fill();
+      p.x += p.dx; p.y += p.dy;
+      if (p.x < 0 || p.x > W) p.dx *= -1;
+      if (p.y < 0 || p.y > H) p.dy *= -1;
+    });
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); });
+  init(); draw();
+})();
+
+/* ══════════════════════════════
+   FILE 5 — three-scene.js
+   Interaktiv 3D velosiped
+   ══════════════════════════════ */
+(function() {
+  const canvas = document.getElementById('threeCanvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setPixelRatio(window.devicePixelRatio);
+  renderer.shadowMap.enabled = true;
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100);
+  camera.position.set(0, 1.5, 5.5);
+
+  // Lights
+  scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+  const dir = new THREE.DirectionalLight(0x00D4FF, 1.4);
+  dir.position.set(5, 8, 5);
+  dir.castShadow = true;
+  scene.add(dir);
+  const back = new THREE.DirectionalLight(0xC8FF00, 0.5);
+  back.position.set(-5, -2, -5);
+  scene.add(back);
+
+  // --- Build bike ---
+  const group = new THREE.Group();
+  scene.add(group);
+
+  const matFrame   = new THREE.MeshStandardMaterial({ color: 0x00D4FF, metalness: 0.9, roughness: 0.2 });
+  const matAccent  = new THREE.MeshStandardMaterial({ color: 0xC8FF00, metalness: 0.7, roughness: 0.3 });
+  const matTire    = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+  const matSpoke   = new THREE.MeshStandardMaterial({ color: 0xaaaaaa, metalness: 1, roughness: 0.1 });
+  const matSeat    = new THREE.MeshStandardMaterial({ color: 0x222244, roughness: 0.8 });
+
+  function tube(from, to, r, mat, parent) {
+    const dir = new THREE.Vector3().subVectors(to, from);
+    const len = dir.length();
+    const geo = new THREE.CylinderGeometry(r, r, len, 8);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.position.copy(from).add(to).multiplyScalar(0.5);
+    mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
+    mesh.castShadow = true;
+    (parent || group).add(mesh);
+    return mesh;
+  }
+
+  function wheel(cx, cy, mat, accentMat, parent) {
+    const g = new THREE.Group();
+    // rim
+    const geo = new THREE.TorusGeometry(0.78, 0.07, 12, 40);
+    const rim = new THREE.Mesh(geo, mat);
+    g.add(rim);
+    // tire
+    const tGeo = new THREE.TorusGeometry(0.78, 0.11, 10, 40);
+    g.add(new THREE.Mesh(tGeo, matTire));
+    // hub
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 0.14, 16), accentMat);
+    hub.rotation.z = Math.PI / 2;
+    g.add(hub);
+    // spokes
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2;
+      const sp = tube(
+        new THREE.Vector3(0, 0, 0),
+        new THREE.Vector3(Math.cos(a) * 0.78, Math.sin(a) * 0.78, 0),
+        0.015, matSpoke, g
+      );
+    }
+    g.position.set(cx, cy, 0);
+    g.rotation.y = Math.PI / 2;
+    (parent || group).add(g);
+    return g;
+  }
+
+  const W1 = wheel(-1.3, 0, matFrame, matAccent);
+  const W2 = wheel( 1.3, 0, matFrame, matAccent);
+
+  // Frame tubes
+  tube(new THREE.Vector3(-1.3,0,0), new THREE.Vector3(0.2,1.1,0),   0.06, matFrame);  // down tube
+  tube(new THREE.Vector3(0.2,1.1,0), new THREE.Vector3(1.3,0,0),    0.055, matFrame); // seat tube
+  tube(new THREE.Vector3(-1.3,0,0), new THREE.Vector3(0.2,1.1,0),   0.06, matFrame);  // chain stay
+  tube(new THREE.Vector3(0.2,1.1,0), new THREE.Vector3(-0.1,1.7,0), 0.055, matFrame); // seat stay
+  tube(new THREE.Vector3(-0.1,1.7,0), new THREE.Vector3(-1.3,0,0),  0.04, matAccent); // seat stay back
+  tube(new THREE.Vector3(-0.1,1.7,0), new THREE.Vector3(0.2,1.1,0), 0.04, matAccent);
+
+  // Fork
+  tube(new THREE.Vector3(-0.1,1.7,0), new THREE.Vector3(-1.3,0,0), 0.04, matFrame);
+  tube(new THREE.Vector3(-0.1,1.7,0), new THREE.Vector3(-0.3,2.1,0), 0.055, matFrame);
+
+  // Handlebar post + bar
+  tube(new THREE.Vector3(-0.3,2.1,0), new THREE.Vector3(-0.3,2.6,0), 0.05, matFrame);
+  tube(new THREE.Vector3(-0.7,2.6,0), new THREE.Vector3(0.1,2.6,0),  0.04, matAccent);
+
+  // Seat post
+  tube(new THREE.Vector3(0.2,1.1,0), new THREE.Vector3(0.2,1.9,0), 0.05, matFrame);
+  const seatGeo = new THREE.BoxGeometry(0.55, 0.07, 0.18);
+  const seat = new THREE.Mesh(seatGeo, matSeat);
+  seat.position.set(0.15, 1.95, 0);
+  group.add(seat);
+
+  // Pedal crank
+  const crankGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.28, 10);
+  const crank = new THREE.Mesh(crankGeo, matAccent);
+  crank.position.set(1.3, 0, 0);
+  crank.rotation.z = Math.PI / 2;
+  group.add(crank);
+  tube(new THREE.Vector3(1.3,0,0), new THREE.Vector3(1.3,0.35,0), 0.03, matAccent);
+  tube(new THREE.Vector3(1.3,0,0), new THREE.Vector3(1.3,-0.35,0), 0.03, matAccent);
+  const pedGeo = new THREE.BoxGeometry(0.22, 0.04, 0.08);
+  ['p1','p2'].forEach((_, i) => {
+    const ped = new THREE.Mesh(pedGeo, matFrame);
+    ped.position.set(1.3, i === 0 ? 0.35 : -0.35, 0);
+    group.add(ped);
+  });
+
+  group.position.y = -0.3;
+
+  // Floor grid
+  const grid = new THREE.GridHelper(10, 20, 0x0A2040, 0x0A2040);
+  grid.position.y = -1.1;
+  scene.add(grid);
+
+  // Mouse drag
+  let isDragging = false, prevMouse = { x: 0, y: 0 };
+  let rotY = 0, rotX = 0;
+
+  canvas.addEventListener('mousedown', e => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
+  window.addEventListener('mouseup',   () => { isDragging = false; });
+  window.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    rotY += (e.clientX - prevMouse.x) * 0.012;
+    rotX += (e.clientY - prevMouse.y) * 0.008;
+    rotX = Math.max(-0.6, Math.min(0.6, rotX));
+    prevMouse = { x: e.clientX, y: e.clientY };
+  });
+  canvas.addEventListener('touchstart', e => { isDragging = true; prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY }; });
+  window.addEventListener('touchend',   () => { isDragging = false; });
+  window.addEventListener('touchmove',  e => {
+    if (!isDragging) return;
+    rotY += (e.touches[0].clientX - prevMouse.x) * 0.012;
+    prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  });
+
+  function resizeCanvas() {
+    const w = canvas.parentElement.clientWidth;
+    const h = w / 2;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  let autoRot = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    if (!isDragging) autoRot += 0.005;
+    group.rotation.y = rotY + autoRot;
+    group.rotation.x = rotX;
+    // Wheels spin
+    W1.rotation.x -= 0.02;
+    W2.rotation.x -= 0.02;
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>
